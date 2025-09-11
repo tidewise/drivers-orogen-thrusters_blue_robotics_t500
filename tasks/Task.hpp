@@ -48,8 +48,6 @@ namespace thrusters_blue_robotics_t500 {
         std::vector<int> m_helices_alignment;
 
     public:
-
-
         /** TaskContext constructor for Task
          * \param name Name of the task. This name needs to be unique to make it
          * identifiable via nameservices. \param initial_state The initial TaskState of

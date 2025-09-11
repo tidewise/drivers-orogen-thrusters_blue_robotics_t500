@@ -115,8 +115,12 @@ void Task::updateHook()
     }
 
     linux_pwms::PWMCommand output;
+    raw_io::PWMDutyDurations rawio;
+
     output.timestamp = base::Time::now();
     output.duty_cycles.reserve(cmd_in.size());
+    rawio.time = base::Time::now();
+    rawio.on_durations.reserve(cmd_in.size());
     for (size_t command_counter = 0; command_counter < cmd_in.elements.size();
          command_counter++) {
         auto pwm_command = computePWMCommand(
@@ -125,9 +129,11 @@ void Task::updateHook()
             pwm_command = invertPWMCommand(pwm_command);
         }
         output.duty_cycles.push_back(pwm_command);
+        rawio.on_durations.push_back(pwm_command);
     }
 
     _cmd_out.write(output);
+    _raw_io_pwm_out.write(rawio);
 }
 void Task::errorHook()
 {
