@@ -1,4 +1,5 @@
 #include "Helpers.hpp"
+#include <base/Float.hpp>
 
 #include <cmath>
 #include <fstream>
@@ -26,9 +27,9 @@ PWMTable thrusters_blue_robotics_t500::loadPWMTable(std::string const& csv_file_
     return table;
 }
 
-uint32_t thrusters_blue_robotics_t500::computePWMCommand(float command,
+uint32_t thrusters_blue_robotics_t500::commandToPWM(float command,
     PWMTable const& pwm_table,
-    float no_actuation_command)
+    uint32_t no_actuation_command)
 {
     if (command == 0) {
         return no_actuation_command;
@@ -54,6 +55,28 @@ uint32_t thrusters_blue_robotics_t500::computePWMCommand(float command,
     const float out = y0 + (y1 - y0) * (command - x0) / (x1 - x0);
 
     return std::round(out);
+}
+
+float thrusters_blue_robotics_t500::pwmToCommand(std::uint32_t pwm,
+    PWMTable const& pwm_table)
+{
+    const auto& lut = pwm_table;
+    if (pwm < lut.duty_cycle_width.front()) {
+        return base::unknown<float>();
+    }
+    else if (pwm > lut.duty_cycle_width.back()) {
+        return base::unknown<float>();
+    }
+
+    // PWMTable is assumed to be small, that is a couple hundred lines
+    std::size_t i = 1; // i is the upper bound limit
+    for (; pwm > lut.duty_cycle_width[i]; i++)
+        ;
+
+    // linear interpolation
+    const auto [x0, x1] = std::tie(lut.cmd[i - 1], lut.cmd[i]);
+    const auto [y0, y1] = std::tie(lut.duty_cycle_width[i - 1], lut.duty_cycle_width[i]);
+    return x0 + (x1 - x0) * (pwm - y0) / (y1 - y0);
 }
 
 uint32_t thrusters_blue_robotics_t500::invertPWMCommand(uint32_t pwm_command,

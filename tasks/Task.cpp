@@ -66,7 +66,7 @@ void Task::updateHook()
     rawio.on_durations.reserve(cmd_in.size());
     for (size_t command_counter = 0; command_counter < cmd_in.elements.size();
          command_counter++) {
-        auto pwm_command = computePWMCommand(
+        auto pwm_command = commandToPWM(
             cmd_in.elements[command_counter].getField(base::JointState::EFFORT),
             *m_cmd_to_pwm_lut,
             m_no_actuation_pwm_command

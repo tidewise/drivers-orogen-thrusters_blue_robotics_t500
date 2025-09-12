@@ -13,7 +13,8 @@ namespace thrusters_blue_robotics_t500 {
 
     PWMTable loadPWMTable(std::string const& csv_file_path);
     uint32_t invertPWMCommand(uint32_t pwm_command, uint32_t center);
-    uint32_t computePWMCommand(float command, PWMTable const& pwm_table, float no_actuation_command);
+    uint32_t commandToPWM(float command, PWMTable const& pwm_table, uint32_t no_actuation_command);
+    float pwmToCommand(uint32_t command, PWMTable const& pwm_table);
 }
 
 #endif
