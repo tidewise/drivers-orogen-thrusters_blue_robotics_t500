@@ -1,57 +1,53 @@
 /* Generated from orogen/lib/orogen/templates/tasks/Task.hpp */
 
-#ifndef THRUSTERS_BLUE_ROBOTICS_T500_TASK_TASK_HPP
-#define THRUSTERS_BLUE_ROBOTICS_T500_TASK_TASK_HPP
+#ifndef THRUSTERS_BLUE_ROBOTICS_T500_FEEDBACKTASK_TASK_HPP
+#define THRUSTERS_BLUE_ROBOTICS_T500_FEEDBACKTASK_TASK_HPP
 
-#include "thrusters_blue_robotics_t500/TaskBase.hpp"
-
-#include <base/JointState.hpp>
+#include "thrusters_blue_robotics_t500/FeedbackTaskBase.hpp"
 
 namespace thrusters_blue_robotics_t500 {
     class PWMTable;
 
-    /*! \class Task
+    /*! \class FeedbackTask
      * \brief The task context provides and requires services. It uses an ExecutionEngine
      to perform its functions.
      * Essential interfaces are operations, data flow ports and properties. These
      interfaces have been defined using the oroGen specification.
      * In order to modify the interfaces you should (re)use oroGen and rely on the
      associated workflow.
-     *
+     * Conversion from the commanded PWM to the corresponding effort
      * \details
      * The name of a TaskContext is primarily defined via:
      \verbatim
      deployment 'deployment_name'
-         task('custom_task_name','thrusters_blue_robotics_t500::Task')
+         task('custom_task_name','thrusters_blue_robotics_t500::FeedbackTask')
      end
      \endverbatim
      *  It can be dynamically adapted when the deployment is called with a prefix
      argument.
      */
-    class Task : public TaskBase {
-        friend class TaskBase;
+    class FeedbackTask : public FeedbackTaskBase {
+        friend class FeedbackTaskBase;
 
     protected:
-    private:
         // Properties
-        std::uint32_t m_no_actuation_pwm_command = 1500000;
-        std::uint32_t m_lut_center_duty_cycle = 1500000;
-        base::JointState::MODE m_cmd_in_mode;
+        std::uint32_t m_center_duty_cycle = 1500000;
+        base::JointState::MODE m_joints_mode;
 
         std::unique_ptr<PWMTable> m_cmd_to_pwm_lut;
         std::vector<HeliceAlignment> m_helices_alignment;
-
     public:
-        /** TaskContext constructor for Task
+        /** TaskContext constructor for FeedbackTask
          * \param name Name of the task. This name needs to be unique to make it
          * identifiable via nameservices. \param initial_state The initial TaskState of
          * the TaskContext. Default is Stopped state.
          */
-        Task(std::string const& name = "thrusters_blue_robotics_t500::Task");
+        FeedbackTask(
+            std::string const& name = "thrusters_blue_robotics_t500::FeedbackTask");
 
-        /** Default deconstructor of Task
+        /** Default deconstructor of FeedbackTask
          */
-        ~Task();
+        ~FeedbackTask();
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the

@@ -23,7 +23,7 @@ task_context "Task" do
     # The helices can be either Clockwise oriented or Counter Clockwise oriented
     property "helices_alignment", "/std/vector</thrusters_blue_robotics_t500/HeliceAlignment>"
 
-    property "center_duty_cycle", "double", 1_500_000
+    property "center_duty_cycle", "uint32_t", 1_500_000
 
     property "no_actuation_pwm_command", "int", 1_500_000
     property "cmd_in_mode", "/base/JointState/MODE", :EFFORT
@@ -34,6 +34,28 @@ task_context "Task" do
     output_port "raw_io_pwm_out", "raw_io/PWMDutyDurations"
 
     exception_states :INVALID_COMMAND_MODE, :INVALID_COMMAND_SIZE
+
+    port_driven
+end
+
+# Conversion from the commanded PWM to the corresponding effort
+task_context "FeedbackTask" do
+    needs_configuration
+
+    property "joints_mode", "/base/JointState/MODE", :EFFORT
+
+    # a comma-separated csv file with two columns. The first is the effort
+    # commands (a float) and the second their respective pwm duty cyle (an int)
+    property "command_to_pwm_table_file_path", "/std/string"
+
+    # A vector indicating the helices alignment
+    # The helices can be either Clockwise oriented or Counter Clockwise oriented
+    property "helices_alignment", "/std/vector</thrusters_blue_robotics_t500/HeliceAlignment>"
+
+    property "center_duty_cycle", "uint32_t", 1_500_000
+
+    input_port "pwm", "raw_io/PWMDutyDurations"
+    output_port "joints", "/base/samples/Joints"
 
     port_driven
 end
