@@ -155,6 +155,33 @@ describe OroGen.thrusters_blue_robotics_t500.Task do
         end
     end
 
+    it "outputs to the new rawio output as well" do
+        task.properties.helices_alignment = [helice_alignment(:COUNTERCLOCKWISE),
+                                             helice_alignment(:COUNTERCLOCKWISE),
+                                             helice_alignment(:COUNTERCLOCKWISE),
+                                             helice_alignment(:COUNTERCLOCKWISE),
+                                             helice_alignment(:COUNTERCLOCKWISE)]
+        syskit_configure_and_start(task)
+
+        t0 = Time.now
+        pwm_out = expect_execution do
+            syskit_write(task.cmd_in_port,
+                         effort_command({ a: 2.21, b: 6.21,
+                                          c: 0.69, d: -2.86, e: -6.52 }))
+        end.to do
+            have_one_new_sample task.raw_io_pwm_out_port
+        end
+
+        assert pwm_out.time > t0
+        assert_equal pwm_out.on_durations.size, 5
+
+        expected = [1589, 1695, 1539, 1353, 1229]
+
+        expected.zip(pwm_out.on_durations).each do |true_value, actual|
+            assert_equal true_value, actual
+        end
+    end
+
     it "interpolates effort commands with inverted helice" do
         task.properties.helices_alignment = [helice_alignment(:CLOCKWISE),
                                              helice_alignment(:CLOCKWISE),
