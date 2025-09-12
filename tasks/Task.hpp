@@ -34,7 +34,7 @@ namespace thrusters_blue_robotics_t500 {
     protected:
     private:
         // Properties
-        std::uint32_t m_no_actuation_pwm_command = 1500;
+        std::uint32_t m_no_actuation_pwm_command = 1500000;
         std::uint32_t m_lut_center_duty_cycle = 1500000;
         base::JointState::MODE m_cmd_in_mode;
 
