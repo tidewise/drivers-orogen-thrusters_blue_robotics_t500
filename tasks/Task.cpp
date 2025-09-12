@@ -26,12 +26,7 @@ bool Task::configureHook()
     m_lut_center_duty_cycle = _center_duty_cycle.get();
     m_no_actuation_pwm_command = _no_actuation_pwm_command.get();
     m_cmd_in_mode = _cmd_in_mode.get();
-    auto const helices_alignment = _helices_alignment.get();
-    m_helices_alignment.clear();
-    m_helices_alignment.reserve(helices_alignment.size());
-    for (auto const& alignment : helices_alignment) {
-        m_helices_alignment.emplace_back(static_cast<int>(alignment));
-    }
+    m_helices_alignment = _helices_alignment.get();
     m_cmd_to_pwm_lut = std::make_unique<PWMTable>(
         loadPWMTable(_command_to_pwm_table_file_path.get())
     );
