@@ -7,4 +7,6 @@ build/*
 *autobuild-stamp
 
 .vscode/*
-
+.jj/*
+bundle/*
+orocos.log

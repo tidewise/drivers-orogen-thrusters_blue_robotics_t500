@@ -235,6 +235,51 @@ describe OroGen.thrusters_blue_robotics_t500.Task do
         end
     end
 
+    it "returns the no actuation pwm command on the very first sample of the ramp" do
+        task.properties.helices_alignment = [helice_alignment(:COUNTERCLOCKWISE)]
+        task.properties.cmd_ramp = [5]
+        syskit_configure_and_start(task)
+
+        pwm_out = expect_execution do
+            syskit_write(task.cmd_in_port, effort_command({ a: -9.91 }))
+        end.to do
+            have_one_new_sample task.cmd_out_port
+        end
+        assert_equal 42, pwm_out.duty_cycles.first
+    end
+
+    it "applies a ramp to the joint command" do
+        task.properties.helices_alignment = [helice_alignment(:COUNTERCLOCKWISE)]
+        task.properties.cmd_ramp = [2.5]
+        syskit_configure_and_start(task)
+
+        # This will go to a 0 command
+        pwm_out = expect_execution do
+            syskit_write(task.cmd_in_port, effort_command({ a: -9.91 }))
+        end.to do
+            have_one_new_sample task.cmd_out_port
+        end
+        assert_equal 42, pwm_out.duty_cycles.first
+
+        # Ensure that a minimum time has passed since the last write to actually make a
+        # difference in the ramp
+        sleep 0.1
+
+        pwm_out = expect_execution do
+            syskit_write(task.cmd_in_port, effort_command({ a: 16.24 }))
+        end.to do
+            have_one_new_sample task.cmd_out_port
+        end
+        actual = pwm_out.duty_cycles.first
+        # Checking the exact value is troublesome as it depends on the delta time between
+        # each write. So instead check that the value is between the equivalent PWM
+        # commands.
+        #
+        # Keep in mind that 1520 is the last sample for the 0 command
+        assert_operator actual, :>, 1520
+        assert_operator actual, :<, 1896
+    end
+
     def effort_command(values)
         Types.base.samples.Joints.new(
             time: Time.now,

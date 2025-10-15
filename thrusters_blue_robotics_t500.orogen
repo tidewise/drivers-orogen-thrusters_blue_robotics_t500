@@ -9,6 +9,9 @@ import_types_from "base"
 import_types_from "linux_pwms"
 import_types_from "raw_io"
 
+using_library "control_base"
+import_types_from "control_base/RampState.hpp"
+
 # Component for convert an EFFORT command into its respective PWM value
 # Should this task has a timeout? So it zero command if no input is received for the
 # given period
@@ -28,10 +31,14 @@ task_context "Task" do
     property "no_actuation_pwm_command", "int", 1_500_000
     property "cmd_in_mode", "/base/JointState/MODE", :EFFORT
 
+    # Maximum allowed variation in input command in unit/s for each thruster
+    property "cmd_ramp", "/std/vector<double>"
+
     input_port "cmd_in", "/base/samples/Joints"
 
     output_port "cmd_out", "linux_pwms/PWMCommand"
     output_port "raw_io_pwm_out", "raw_io/PWMDutyDurations"
+    output_port "ramp_state", "/std/vector<control_base/RampState>"
 
     exception_states :INVALID_COMMAND_MODE, :INVALID_COMMAND_SIZE
 

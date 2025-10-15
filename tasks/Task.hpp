@@ -5,7 +5,10 @@
 
 #include "thrusters_blue_robotics_t500/TaskBase.hpp"
 
+#include "control_base/Ramp.hpp"
+#include "control_base/RampState.hpp"
 #include <base/JointState.hpp>
+#include <base/Time.hpp>
 
 namespace thrusters_blue_robotics_t500 {
     class PWMTable;
@@ -40,6 +43,11 @@ namespace thrusters_blue_robotics_t500 {
 
         std::unique_ptr<PWMTable> m_cmd_to_pwm_lut;
         std::vector<HeliceAlignment> m_helices_alignment;
+
+        std::vector<control_base::Ramp> m_ramp_states;
+        std::vector<double> m_ramp_rates;
+
+        std::vector<control_base::RampState> getRampStates();
 
     public:
         /** TaskContext constructor for Task
