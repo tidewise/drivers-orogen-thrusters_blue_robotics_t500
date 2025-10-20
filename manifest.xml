@@ -6,6 +6,7 @@
 
   <depend package="base/cmake" />
   <depend package="base/orogen/types" />
+  <depend package="control/control_base" />
   <depend package="drivers/orogen/linux_pwms" />
   <depend package="drivers/orogen/raw_io" />
   <test_depend package="tools/syskit" />
